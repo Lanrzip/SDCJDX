@@ -16,16 +16,19 @@ class XuankeSystem(QWidget):
 
     def init_ui(self):
         self.setWindowTitle('学生选课系统')
-        self.resize(800,600)
+        #self.resize(800,600)
 
-        form_layout = QFormLayout()
+        layout = QGridLayout()
 
         """输入"""
+        username_label = QLabel('用户名')
         self.username_line_edit = QLineEdit()
+        password_label = QLabel('密码')
         self.password_line_edit = QLineEdit()
 
         self.username_line_edit.setPlaceholderText('请输入账号')
         self.password_line_edit.setPlaceholderText('请输入密码')
+
 
         # 限定11位整数
         int_validator = QRegExpValidator()
@@ -35,36 +38,47 @@ class XuankeSystem(QWidget):
         # 输入密码时不显示
         self.password_line_edit.setEchoMode(QLineEdit.Password)
 
-        form_layout.addRow('用户名', self.username_line_edit)
-        form_layout.addRow('密码', self.password_line_edit)
+        layout.addWidget(username_label, 1, 0)
+        layout.addWidget(self.username_line_edit,1 , 1)
+        layout.addWidget(password_label)
+        layout.addWidget(self.password_line_edit)
 
         """选择"""
         self.check_message_box = QCheckBox('发送短信通知')
         self.check_message_box.stateChanged.connect(self.use_or_not)
+        #self.check_message_box.stateChanged.connect(self.show_dialog)
 
+        account_label = QLabel('account')
         self.account_line_edit = QLineEdit()
         self.account_line_edit.setEnabled(False)
+        token_label = QLabel('token')
         self.token_line_edit = QLineEdit()
         self.token_line_edit.setEnabled(False)
+        from_label = QLabel('from')
         self.from_line_edit = QLineEdit()
         self.from_line_edit.setEnabled(False)
+        to_label = QLabel('to')
         self.to_line_edit = QLineEdit()
         self.to_line_edit.setEnabled(False)
 
 
-        form_layout.addRow('', self.check_message_box)
-        form_layout.addRow('account', self.account_line_edit)
-        form_layout.addRow('token', self.token_line_edit)
-        form_layout.addRow('from', self.from_line_edit)
-        form_layout.addRow('to', self.to_line_edit)
+        layout.addWidget(self.check_message_box, 3, 0)
+        layout.addWidget(account_label, 4, 0)
+        layout.addWidget(token_label,5,0)
+        layout.addWidget(from_label,6,0)
+        layout.addWidget(to_label,7,0)
+        layout.addWidget(self.account_line_edit,4,1)
+        layout.addWidget(self.token_line_edit,5,1)
+        layout.addWidget(self.from_line_edit,6,1)
+        layout.addWidget(self.to_line_edit,7,1)
 
         """开始按钮"""
         self.start_button = QPushButton('开始')
         self.start_button.clicked.connect(self.login)
 
-        form_layout.addRow(self.start_button)
+        layout.addWidget(self.start_button,8,1)
 
-        self.setLayout(form_layout)
+        self.setLayout(layout)
 
     def use_or_not(self):
         check_box = self.sender()
@@ -74,11 +88,17 @@ class XuankeSystem(QWidget):
             self.token_line_edit.setEnabled(True)
             self.to_line_edit.setEnabled(True)
             self.from_line_edit.setEnabled(True)
+            self.show_dialog()
         else:
             self.account_line_edit.setEnabled(False)
             self.token_line_edit.setEnabled(False)
             self.to_line_edit.setEnabled(False)
             self.from_line_edit.setEnabled(False)
+
+    def show_dialog(self):
+        message = "使用短信提醒功能请前往 <a href='https://www.twilio.com/'>twilio.com</a> 注册账号。 \
+                  使用教程可参考 <a href=''>教程</a>, 会用当我没说。。。"
+        QMessageBox.information(self, '提示', message, QMessageBox.Yes)
 
     def login(self):
         username = self.username_line_edit.text()
@@ -129,7 +149,7 @@ class XuankeSystem(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-
+    app.setWindowIcon(QIcon('timg.jpg'))
     main = XuankeSystem()
     main.show()
 
