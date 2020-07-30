@@ -17,7 +17,6 @@ class XuankeSystem(QWidget):
     def init_ui(self):
         self.setWindowTitle('学生选课系统')
         #self.resize(800,600)
-
         layout = QGridLayout()
 
         """输入"""
@@ -40,8 +39,8 @@ class XuankeSystem(QWidget):
 
         layout.addWidget(username_label, 1, 0)
         layout.addWidget(self.username_line_edit,1 , 1)
-        layout.addWidget(password_label)
-        layout.addWidget(self.password_line_edit)
+        layout.addWidget(password_label,2,0)
+        layout.addWidget(self.password_line_edit,2,1)
 
         """选择"""
         self.check_message_box = QCheckBox('发送短信通知')
@@ -96,9 +95,11 @@ class XuankeSystem(QWidget):
             self.from_line_edit.setEnabled(False)
 
     def show_dialog(self):
-        message = "使用短信提醒功能请前往 <a href='https://www.twilio.com/'>twilio.com</a> 注册账号。 \
+        message = "开启短信提醒功能请前往 <a href='https://www.twilio.com/'>twilio.com</a> 注册账号。 \
                   使用教程可参考 <a href=''>教程</a>, 会用当我没说。。。"
-        QMessageBox.information(self, '提示', message, QMessageBox.Yes)
+        reply = QMessageBox.information(self, '提示', message, QMessageBox.Yes | QMessageBox.No)
+        if reply == QMessageBox.No:
+            self.check_message_box.setCheckState(0)
 
     def login(self):
         username = self.username_line_edit.text()
