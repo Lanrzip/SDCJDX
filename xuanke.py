@@ -3,20 +3,24 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+import sys, time
 
 
-class XuankeSystem(QWidget):
+class XuankeSystem(QMainWindow):
     def __init__(self):
         super().__init__()
         self.init_ui()
 
     def init_ui(self):
         self.setWindowTitle('学生选课系统')
-        #self.resize(800,600)
+        self.status = self.statusBar()
+        self.timer = QTimer()
+        self.timer.start()
+        self.timer.timeout.connect(self.show_time)
+
         layout = QGridLayout()
 
         """输入"""
@@ -60,7 +64,6 @@ class XuankeSystem(QWidget):
         self.to_line_edit = QLineEdit()
         self.to_line_edit.setEnabled(False)
 
-
         layout.addWidget(self.check_message_box, 3, 0)
         layout.addWidget(account_label, 4, 0)
         layout.addWidget(token_label,5,0)
@@ -74,10 +77,17 @@ class XuankeSystem(QWidget):
         """开始按钮"""
         self.start_button = QPushButton('开始')
         self.start_button.clicked.connect(self.login)
-
         layout.addWidget(self.start_button,8,1)
 
-        self.setLayout(layout)
+        main_frame = QWidget()
+        self.setCentralWidget(main_frame)
+        main_frame.setLayout(layout)
+
+    def show_time(self):
+        time = QDateTime.currentDateTime()
+        timeDisplay = time.toString("yyyy-MM-dd hh:mm:ss dddd")
+        self.status.showMessage(timeDisplay)
+
 
     def use_or_not(self):
         check_box = self.sender()
@@ -102,11 +112,11 @@ class XuankeSystem(QWidget):
             self.check_message_box.setCheckState(0)
 
     def login(self):
+
         username = self.username_line_edit.text()
         password = self.password_line_edit.text()
 
         print('开始')
-        print(self.check_message_box.isChecked())
 
         driver_path = r'D:\eng\chromedriver.exe'
         driver = webdriver.Chrome(executable_path=driver_path)
@@ -152,6 +162,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon('timg.jpg'))
     main = XuankeSystem()
-    main.show()
 
+    main.show()
     sys.exit(app.exec_())
