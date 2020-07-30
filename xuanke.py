@@ -6,7 +6,12 @@ from selenium.webdriver.common.by import By
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from functools import partial
 import sys, time
+
+
+USERNAME, PASSWORD, SEND_MESSAGE = '', '', ''
+ACCOUNT, TOKEN, FROM, TO = '', '', '', ''
 
 
 class XuankeSystem(QMainWindow):
@@ -49,7 +54,6 @@ class XuankeSystem(QMainWindow):
         """选择"""
         self.check_message_box = QCheckBox('发送短信通知')
         self.check_message_box.stateChanged.connect(self.use_or_not)
-        #self.check_message_box.stateChanged.connect(self.show_dialog)
 
         account_label = QLabel('account')
         self.account_line_edit = QLineEdit()
@@ -66,18 +70,23 @@ class XuankeSystem(QMainWindow):
 
         layout.addWidget(self.check_message_box, 3, 0)
         layout.addWidget(account_label, 4, 0)
-        layout.addWidget(token_label,5,0)
-        layout.addWidget(from_label,6,0)
-        layout.addWidget(to_label,7,0)
-        layout.addWidget(self.account_line_edit,4,1)
-        layout.addWidget(self.token_line_edit,5,1)
-        layout.addWidget(self.from_line_edit,6,1)
-        layout.addWidget(self.to_line_edit,7,1)
+        layout.addWidget(token_label, 5, 0)
+        layout.addWidget(from_label, 6, 0)
+        layout.addWidget(to_label, 7, 0)
+        layout.addWidget(self.account_line_edit, 4, 1)
+        layout.addWidget(self.token_line_edit, 5, 1)
+        layout.addWidget(self.from_line_edit, 6, 1)
+        layout.addWidget(self.to_line_edit, 7, 1)
 
         """开始按钮"""
         self.start_button = QPushButton('开始')
-        self.start_button.clicked.connect(self.login)
-        layout.addWidget(self.start_button,8,1)
+        username = self.username_line_edit.text()
+        password = self.password_line_edit.text()
+        self.start_button.clicked.connect(self.validate)
+
+        thread = MyThread()
+        self.start_button.clicked.connect(lambda: thread.start())
+        layout.addWidget(self.start_button, 8, 1)
 
         main_frame = QWidget()
         self.setCentralWidget(main_frame)
@@ -87,7 +96,6 @@ class XuankeSystem(QMainWindow):
         time = QDateTime.currentDateTime()
         timeDisplay = time.toString("yyyy-MM-dd hh:mm:ss dddd")
         self.status.showMessage(timeDisplay)
-
 
     def use_or_not(self):
         check_box = self.sender()
@@ -110,21 +118,32 @@ class XuankeSystem(QMainWindow):
         reply = QMessageBox.information(self, '提示', message, QMessageBox.Yes | QMessageBox.No)
         if reply == QMessageBox.No:
             self.check_message_box.setCheckState(0)
+            
+    def validate(self):
+        global USERNAME, PASSWORD, SEND_MESSAGE, ACCOUNT, TOKEN, FROM, TO
+        USERNAME = self.username_line_edit.text()
+        PASSWORD = self.password_line_edit.text()
 
-    def login(self):
+        ACCOUNT = self.account_line_edit.text()
+        TOKEN = self.token_line_edit.text()
+        FROM = self.from_line_edit.text()
+        TO = self.to_line_edit.text()
 
-        username = self.username_line_edit.text()
-        password = self.password_line_edit.text()
+
+class MyThread(QThread):
+    def __init__(self):
+        super(MyThread, self).__init__()
+
+    def run(self):
 
         print('开始')
-
         driver_path = r'D:\eng\chromedriver.exe'
         driver = webdriver.Chrome(executable_path=driver_path)
         driver.get('http://jw.sdufe.edu.cn/')
         input_ID = driver.find_element_by_id('userAccount')
         input_PD = driver.find_element_by_id('userPassword')
-        input_ID.send_keys(username)
-        input_PD.send_keys(password)
+        input_ID.send_keys(USERNAME)
+        input_PD.send_keys(PASSWORD)
 
         element = WebDriverWait(driver, 300).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'maintext'))
@@ -135,22 +154,20 @@ class XuankeSystem(QMainWindow):
 
         driver.find_element_by_xpath("//div[@class='panel-body']//div[@class='grid'][3]").click()
 
-
         """是否发送短信"""
-        if self.account_line_edit.text() != '':
+        if ACCOUNT != '':
             self.send_message()
 
     def send_message(self):
-        ACCOUNT = "AC7f63698bf6c852f6311153fad0c9f941"
-        TOKEN = "fd4c30c60d30fa818fb428dd855023db"
-        FROM = '+18569421593'
-        TO = '+8618653195606'
+        # ACCOUNT = "AC7f63698bf6c852f6311153fad0c9f941"
+        # TOKEN = "fd4c30c60d30fa818fb428dd855023db"
+        # FROM = '+18569421593'
+        # TO = '+8618653195606'
 
-
-        account = self.account_line_edit.text()
-        token = self.token_line_edit.text()
-        from_ = self.from_line_edit.text()
-        to = self.to_line_edit.text()
+        account = ACCOUNT
+        token = TOKEN
+        from_ = FROM
+        to = TO
 
         client = Client(account, token)
 
@@ -158,10 +175,12 @@ class XuankeSystem(QMainWindow):
                                          from_=from_,
                                          body='抢课成功')
 
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon('timg.jpg'))
-    main = XuankeSystem()
 
+    main = XuankeSystem()
     main.show()
+
     sys.exit(app.exec_())
