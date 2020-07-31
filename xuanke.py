@@ -32,8 +32,10 @@ class XuankeSystem(QMainWindow):
         """输入"""
         username_label = QLabel('用户名')
         self.username_line_edit = QLineEdit()
+        username_label.setFont(QFont("Microsoft YaHei"))
         password_label = QLabel('密码')
         self.password_line_edit = QLineEdit()
+        password_label.setFont(QFont("Microsoft YaHei"))
 
         self.username_line_edit.setPlaceholderText('请输入账号')
         self.password_line_edit.setPlaceholderText('请输入密码')
@@ -57,15 +59,19 @@ class XuankeSystem(QMainWindow):
         self.check_message_box.stateChanged.connect(self.use_or_not)
 
         account_label = QLabel('account')
+        account_label.setFont(QFont("Microsoft YaHei"))
         self.account_line_edit = QLineEdit()
         self.account_line_edit.setEnabled(False)
         token_label = QLabel('token')
+        token_label.setFont(QFont("Microsoft YaHei"))
         self.token_line_edit = QLineEdit()
         self.token_line_edit.setEnabled(False)
         from_label = QLabel('from')
+        from_label.setFont(QFont("Microsoft YaHei"))
         self.from_line_edit = QLineEdit()
         self.from_line_edit.setEnabled(False)
         to_label = QLabel('to')
+        to_label.setFont(QFont("Microsoft YaHei"))
         self.to_line_edit = QLineEdit()
         self.to_line_edit.setEnabled(False)
 
@@ -82,7 +88,7 @@ class XuankeSystem(QMainWindow):
         space_label = QLabel('')
         layout.addWidget(space_label, 8, 1, 1, 2)
         label = QLabel('选择选修课类型')
-        layout.addWidget(label, 9, 0, 1, 1)
+        layout.addWidget(label, 9, 0)
         self.category_button1 = QRadioButton('通识选修')
         self.category_button1.setChecked(True)
         self.category_button1.toggled.connect(self.category_state)
@@ -230,7 +236,180 @@ class MyThread(QThread):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon('timg.jpg'))
+    qss = '''
+QWidget
+{
+	background-color: #3a3a3a;
+	color: #fff;
+	selection-background-color: #b78620;
+	selection-color: #000;
 
+}
+QLabel
+{
+	color: #b9b9bb;
+	border-color: #000000;
+
+}
+QPushButton
+{
+	background-color: #ff9c2b;
+	color: #000000;
+	font-weight: bold;
+	border-style: solid;
+	border-color: #000000;
+	padding: 6px;
+
+}
+QPushButton::hover
+{
+	background-color: rgba(183, 134, 32, 20%);
+	border: 1px solid #b78620;
+
+}
+
+QPushButton::pressed
+{
+	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(74, 74, 74, 255),stop:1 rgba(49, 49, 49, 255));
+	border: 1px solid #b78620;
+
+}
+
+
+
+
+QCheckBox
+{
+	background-color: transparent;
+    color: lightgray;
+	border: none;
+
+}
+
+
+QCheckBox::indicator
+{
+    background-color: #323232;
+    border: 1px solid darkgray;
+    width: 12px;
+    height: 12px;
+
+}
+
+
+QCheckBox::indicator:checked
+{
+    image:url("./check_mark.png");
+	background-color: #b78620;
+    border: 1px solid #3a546e;
+
+}
+QCheckBox::indicator:unchecked:hover
+{
+	border: 1px solid #b78620; 
+
+}
+
+
+QRadioButton 
+{
+	color: #fff;
+	background-color: transparent;
+
+}
+
+
+QRadioButton::indicator::unchecked:hover 
+{
+	background-color: #d3d3d3;
+	border: 2px solid #002b2b;
+	border-radius: 6px;
+}
+
+
+QRadioButton::indicator::checked 
+{
+	border: 2px solid #52beff;
+	border-radius: 6px;
+	background-color: #002b2b;  
+	width: 9px; 
+	height: 9px; 
+
+}
+QComboBox
+{
+    background-color: #4a5157;
+    padding-left: 6px;
+    color: #fff;
+    height: 20px;
+	border-radius: 4px;
+
+}
+
+
+QComboBox::disabled
+{
+	background-color: #404040;
+	color: #656565;
+	border-color: #051a39;
+
+}
+
+
+QComboBox:on
+{
+    background-color: #4a5157;
+	color: #fff;
+
+}
+
+
+QComboBox QAbstractItemView
+{
+    background-color: #4a5157;
+    color: #fff;
+    selection-background-color: #002b2b;
+	selection-color: #fff;
+    outline: 0;
+
+}
+
+
+QComboBox::drop-down
+{
+	background-color: #4a5157;
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+	border-radius: 4px;
+    width: 15px;
+
+}
+
+
+QComboBox::down-arrow
+{
+    image: url(./arrow_down.png);
+    width: 8px;
+    height: 8px;
+
+}
+
+
+
+QLineEdit{
+	background-color: #4d4d4d;
+	color: #fff;
+	font-weight: bold;
+	border-style: solid;
+	border-radius: 5px;
+	padding: 5px;
+
+}
+
+
+
+    '''
+    app.setStyleSheet(qss)
     main = XuankeSystem()
     main.show()
 
