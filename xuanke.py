@@ -12,6 +12,7 @@ import sys, time
 
 USERNAME, PASSWORD, SEND_MESSAGE = '', '', ''
 ACCOUNT, TOKEN, FROM, TO = '', '', '', ''
+CATEGORY = ''
 
 
 class XuankeSystem(QMainWindow):
@@ -46,10 +47,10 @@ class XuankeSystem(QMainWindow):
         # 输入密码时不显示
         self.password_line_edit.setEchoMode(QLineEdit.Password)
 
-        layout.addWidget(username_label, 1, 0)
-        layout.addWidget(self.username_line_edit,1 , 1)
-        layout.addWidget(password_label,2,0)
-        layout.addWidget(self.password_line_edit,2,1)
+        layout.addWidget(username_label, 1, 0, 1, 2)
+        layout.addWidget(self.username_line_edit, 1, 2, 1, 2)
+        layout.addWidget(password_label, 2, 0, 1, 2)
+        layout.addWidget(self.password_line_edit, 2, 2, 1, 2)
 
         """选择"""
         self.check_message_box = QCheckBox('发送短信通知')
@@ -68,29 +69,70 @@ class XuankeSystem(QMainWindow):
         self.to_line_edit = QLineEdit()
         self.to_line_edit.setEnabled(False)
 
-        layout.addWidget(self.check_message_box, 3, 0)
-        layout.addWidget(account_label, 4, 0)
-        layout.addWidget(token_label, 5, 0)
-        layout.addWidget(from_label, 6, 0)
-        layout.addWidget(to_label, 7, 0)
-        layout.addWidget(self.account_line_edit, 4, 1)
-        layout.addWidget(self.token_line_edit, 5, 1)
-        layout.addWidget(self.from_line_edit, 6, 1)
-        layout.addWidget(self.to_line_edit, 7, 1)
+        layout.addWidget(self.check_message_box, 3, 0, 1, 2)
+        layout.addWidget(account_label, 4, 0, 1, 2)
+        layout.addWidget(token_label, 5, 0, 1, 2)
+        layout.addWidget(from_label, 6, 0, 1, 2)
+        layout.addWidget(to_label, 7, 0, 1, 2)
+        layout.addWidget(self.account_line_edit, 4, 2, 1, 2)
+        layout.addWidget(self.token_line_edit, 5, 2, 1, 2)
+        layout.addWidget(self.from_line_edit, 6, 2, 1, 2)
+        layout.addWidget(self.to_line_edit, 7, 2, 1, 2)
+
+        space_label = QLabel('')
+        layout.addWidget(space_label, 8, 1, 1, 2)
+        label = QLabel('选择选修课类型')
+        layout.addWidget(label, 9, 0, 1, 1)
+        self.category_button1 = QRadioButton('通识选修')
+        self.category_button1.setChecked(True)
+        self.category_button1.toggled.connect(self.category_state)
+        self.category_button2 = QRadioButton('专业选修')
+        self.category_button2.toggled.connect(self.category_state)
+        layout.addWidget(self.category_button1, 10, 0)
+        layout.addWidget(self.category_button2, 10, 1)
+
+        label2 = QLabel('类别：')
+        self.combo_box1 = QComboBox()
+        self.combo_box1.addItems(['所有课程','财经特色','传统文化','创新创业',
+                                  '人文社科','自然科学','体育保健'])
+        self.combo_box2 = QComboBox()
+        self.combo_box2.addItems(['所有课程','...'])
+
+        self.combo_box2.setEnabled(False)
+        layout.addWidget(label2, 11, 0)
+        layout.addWidget(self.combo_box1, 12, 0)
+        layout.addWidget(self.combo_box2, 12, 1)
+
+        username = self.username_line_edit.text()
+        password = self.password_line_edit.text()
 
         """开始按钮"""
         self.start_button = QPushButton('开始')
-        username = self.username_line_edit.text()
-        password = self.password_line_edit.text()
         self.start_button.clicked.connect(self.validate)
 
         thread = MyThread()
         self.start_button.clicked.connect(lambda: thread.start())
-        layout.addWidget(self.start_button, 8, 1)
+        layout.addWidget(self.start_button, 18, 2)
+
+        """终止按钮"""
+        self.stop_button = QPushButton('终止')
+        self.stop_button.clicked.connect(lambda: thread.terminate())
+        layout.addWidget(self.stop_button, 18, 3)
 
         main_frame = QWidget()
         self.setCentralWidget(main_frame)
         main_frame.setLayout(layout)
+
+    def category_state(self):
+        radio_button = self.sender()
+        if radio_button.text() == '专业选修':
+            self.combo_box1.setEnabled(False)
+            self.combo_box2.setEnabled(True)
+        elif radio_button.text() == '通识选修':
+            self.combo_box1.setEnabled(True)
+            self.combo_box2.setEnabled(False)
+        else:
+            pass
 
     def show_time(self):
         time = QDateTime.currentDateTime()
@@ -120,7 +162,8 @@ class XuankeSystem(QMainWindow):
             self.check_message_box.setCheckState(0)
             
     def validate(self):
-        global USERNAME, PASSWORD, SEND_MESSAGE, ACCOUNT, TOKEN, FROM, TO
+        global USERNAME, PASSWORD, SEND_MESSAGE, ACCOUNT, \
+                TOKEN, FROM, TO, CATEGORY
         USERNAME = self.username_line_edit.text()
         PASSWORD = self.password_line_edit.text()
 
@@ -128,6 +171,11 @@ class XuankeSystem(QMainWindow):
         TOKEN = self.token_line_edit.text()
         FROM = self.from_line_edit.text()
         TO = self.to_line_edit.text()
+
+        if self.category_button1.isChecked():
+            CATEGORY = self.combo_box1.currentText()
+        else:
+            CATEGORY = self.combo_box2.currentText()
 
 
 class MyThread(QThread):
@@ -137,6 +185,7 @@ class MyThread(QThread):
     def run(self):
 
         print('开始')
+        print(CATEGORY)
         driver_path = r'D:\eng\chromedriver.exe'
         driver = webdriver.Chrome(executable_path=driver_path)
         driver.get('http://jw.sdufe.edu.cn/')
@@ -153,6 +202,8 @@ class MyThread(QThread):
         driver.switch_to.frame(iframe)
 
         driver.find_element_by_xpath("//div[@class='panel-body']//div[@class='grid'][3]").click()
+
+
 
         """是否发送短信"""
         if ACCOUNT != '':
