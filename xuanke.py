@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from functools import partial
+from TitleBar import *
 import sys, time
 
 
@@ -18,86 +18,81 @@ CATEGORY = ''
 class XuankeSystem(QMainWindow):
     def __init__(self):
         super().__init__()
+        # 窗口置顶 | 不显示标题栏
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
         self.init_ui()
 
     def init_ui(self):
         self.setWindowTitle('学生选课系统')
+        # 状态栏显示时间
         self.status = self.statusBar()
+        self.status.setObjectName('DownWidget')
         self.timer = QTimer()
         self.timer.start()
         self.timer.timeout.connect(self.show_time)
 
-        layout = QGridLayout()
-
         """输入"""
         username_label = QLabel('用户名')
-        self.username_line_edit = QLineEdit()
         username_label.setFont(QFont("Microsoft YaHei"))
+        username_label.setObjectName('Label')
+
         password_label = QLabel('密码')
-        self.password_line_edit = QLineEdit()
         password_label.setFont(QFont("Microsoft YaHei"))
+        password_label.setObjectName('Label')
 
+        self.username_line_edit = QLineEdit()
         self.username_line_edit.setPlaceholderText('请输入账号')
-        self.password_line_edit.setPlaceholderText('请输入密码')
-
-
         # 限定11位整数
         int_validator = QRegExpValidator()
         reg = QRegExp(r'\d{11}')
         int_validator.setRegExp(reg)
         self.username_line_edit.setValidator(int_validator)
+
+        self.password_line_edit = QLineEdit()
+        self.password_line_edit.setPlaceholderText('请输入密码')
         # 输入密码时不显示
         self.password_line_edit.setEchoMode(QLineEdit.Password)
-
-        layout.addWidget(username_label, 1, 0, 1, 2)
-        layout.addWidget(self.username_line_edit, 1, 2, 1, 2)
-        layout.addWidget(password_label, 2, 0, 1, 2)
-        layout.addWidget(self.password_line_edit, 2, 2, 1, 2)
 
         """选择"""
         self.check_message_box = QCheckBox('发送短信通知')
         self.check_message_box.stateChanged.connect(self.use_or_not)
 
         account_label = QLabel('account')
-        account_label.setFont(QFont("Microsoft YaHei"))
-        self.account_line_edit = QLineEdit()
-        self.account_line_edit.setEnabled(False)
         token_label = QLabel('token')
-        token_label.setFont(QFont("Microsoft YaHei"))
-        self.token_line_edit = QLineEdit()
-        self.token_line_edit.setEnabled(False)
         from_label = QLabel('from')
-        from_label.setFont(QFont("Microsoft YaHei"))
-        self.from_line_edit = QLineEdit()
-        self.from_line_edit.setEnabled(False)
         to_label = QLabel('to')
+
+        account_label.setFont(QFont("Microsoft YaHei"))
+        token_label.setFont(QFont("Microsoft YaHei"))
+        from_label.setFont(QFont("Microsoft YaHei"))
         to_label.setFont(QFont("Microsoft YaHei"))
+
+        account_label.setObjectName('Label')
+        token_label.setObjectName('Label')
+        from_label.setObjectName('Label')
+        to_label.setObjectName('Label')
+
+        self.account_line_edit = QLineEdit()
+        self.token_line_edit = QLineEdit()
+        self.from_line_edit = QLineEdit()
         self.to_line_edit = QLineEdit()
+        self.account_line_edit.setEnabled(False)
+        self.token_line_edit.setEnabled(False)
+        self.from_line_edit.setEnabled(False)
         self.to_line_edit.setEnabled(False)
 
-        layout.addWidget(self.check_message_box, 3, 0, 1, 2)
-        layout.addWidget(account_label, 4, 0, 1, 2)
-        layout.addWidget(token_label, 5, 0, 1, 2)
-        layout.addWidget(from_label, 6, 0, 1, 2)
-        layout.addWidget(to_label, 7, 0, 1, 2)
-        layout.addWidget(self.account_line_edit, 4, 2, 1, 2)
-        layout.addWidget(self.token_line_edit, 5, 2, 1, 2)
-        layout.addWidget(self.from_line_edit, 6, 2, 1, 2)
-        layout.addWidget(self.to_line_edit, 7, 2, 1, 2)
-
         space_label = QLabel('')
-        layout.addWidget(space_label, 8, 1, 1, 2)
         label = QLabel('选择选修课类型')
-        layout.addWidget(label, 9, 0)
+        label.setObjectName('Label')
+
         self.category_button1 = QRadioButton('通识选修')
         self.category_button1.setChecked(True)
         self.category_button1.toggled.connect(self.category_state)
         self.category_button2 = QRadioButton('专业选修')
         self.category_button2.toggled.connect(self.category_state)
-        layout.addWidget(self.category_button1, 10, 0)
-        layout.addWidget(self.category_button2, 10, 1)
 
         label2 = QLabel('类别：')
+        label2.setObjectName('Label')
         self.combo_box1 = QComboBox()
         self.combo_box1.addItems(['所有课程','财经特色','传统文化','创新创业',
                                   '人文社科','自然科学','体育保健'])
@@ -105,29 +100,78 @@ class XuankeSystem(QMainWindow):
         self.combo_box2.addItems(['所有课程','...'])
 
         self.combo_box2.setEnabled(False)
-        layout.addWidget(label2, 11, 0)
-        layout.addWidget(self.combo_box1, 12, 0)
-        layout.addWidget(self.combo_box2, 12, 1)
 
         username = self.username_line_edit.text()
         password = self.password_line_edit.text()
 
         """开始按钮"""
         self.start_button = QPushButton('开始')
-        self.start_button.clicked.connect(self.validate)
-
-        thread = MyThread()
-        self.start_button.clicked.connect(lambda: thread.start())
-        layout.addWidget(self.start_button, 18, 2)
-
+        self.start_button.setObjectName('Button')
         """终止按钮"""
         self.stop_button = QPushButton('终止')
+        self.stop_button.setObjectName('Button')
+
+        thread = MyThread()
+        self.start_button.clicked.connect(self.validate)
+        self.start_button.clicked.connect(lambda: thread.start())
         self.stop_button.clicked.connect(lambda: thread.terminate())
-        layout.addWidget(self.stop_button, 18, 3)
+
+        down_layout = QGridLayout()
+
+        down_layout.addWidget(username_label, 1, 0, 1, 2)
+        down_layout.addWidget(password_label, 2, 0, 1, 2)
+        down_layout.addWidget(self.username_line_edit, 1, 2, 1, 2)
+        down_layout.addWidget(self.password_line_edit, 2, 2, 1, 2)
+        down_layout.addWidget(self.check_message_box, 3, 0, 1, 2)
+        down_layout.addWidget(account_label, 4, 0, 1, 2)
+        down_layout.addWidget(token_label, 5, 0, 1, 2)
+        down_layout.addWidget(from_label, 6, 0, 1, 2)
+        down_layout.addWidget(to_label, 7, 0, 1, 2)
+        down_layout.addWidget(self.account_line_edit, 4, 2, 1, 2)
+        down_layout.addWidget(self.token_line_edit, 5, 2, 1, 2)
+        down_layout.addWidget(self.from_line_edit, 6, 2, 1, 2)
+        down_layout.addWidget(self.to_line_edit, 7, 2, 1, 2)
+        down_layout.addWidget(space_label, 8, 1, 1, 2)
+        down_layout.addWidget(label, 9, 0)
+        down_layout.addWidget(self.category_button1, 10, 0)
+        down_layout.addWidget(self.category_button2, 10, 1)
+        down_layout.addWidget(label2, 11, 0)
+        down_layout.addWidget(self.combo_box1, 12, 0)
+        down_layout.addWidget(self.combo_box2, 12, 1)
+        down_layout.addWidget(self.start_button, 18, 2)
+        down_layout.addWidget(self.stop_button, 18, 3)
+
+        self.titleBar = TitleBar(self)
+        self.titleBar.setObjectName('UpWidget')
+        up_layout = QVBoxLayout()
+        up_layout.addWidget(self.titleBar)
+
+        up_layout.setContentsMargins(0, 0, 0, 0)
+
+        up_widget = QWidget()
+        up_widget.setObjectName('UpWidget')
+        down_widget = QWidget()
+        down_widget.setObjectName('DownWidget')
+
+        up_widget.setLayout(up_layout)
+        down_widget.setLayout(down_layout)
+        
+        global_layout = QVBoxLayout()    
+        global_layout.addWidget(up_widget)
+        global_layout.addWidget(down_widget)
+        global_layout.setStretch(1, 10)
+        global_layout.setSpacing(0)
+        global_layout.setContentsMargins(0, 0, 0, 0)
 
         main_frame = QWidget()
         self.setCentralWidget(main_frame)
-        main_frame.setLayout(layout)
+        main_frame.setLayout(global_layout)
+        
+        self.titleBar.SetIcon(QPixmap('res/crap.png'))
+        self.titleBar.SetTitle('学生选课系统')
+        # main_frame = QWidget()
+        # self.setCentralWidget(main_frame)
+        # main_frame.setLayout(down_layout)
 
     def category_state(self):
         radio_button = self.sender()
@@ -164,6 +208,7 @@ class XuankeSystem(QMainWindow):
         message = "开启短信提醒功能请前往 <a href='https://www.twilio.com/'>twilio.com</a> 注册账号。 \
                   使用教程可参考 <a href=''>教程</a>, 会用当我没说。。。"
         reply = QMessageBox.information(self, '提示', message, QMessageBox.Yes | QMessageBox.No)
+        self.setObjectName('DownWidget')
         if reply == QMessageBox.No:
             self.check_message_box.setCheckState(0)
             
@@ -235,181 +280,11 @@ class MyThread(QThread):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon('timg.jpg'))
-    qss = '''
-QWidget
-{
-	background-color: #3a3a3a;
-	color: #fff;
-	selection-background-color: #b78620;
-	selection-color: #000;
-
-}
-QLabel
-{
-	color: #b9b9bb;
-	border-color: #000000;
-
-}
-QPushButton
-{
-	background-color: #ff9c2b;
-	color: #000000;
-	font-weight: bold;
-	border-style: solid;
-	border-color: #000000;
-	padding: 6px;
-
-}
-QPushButton::hover
-{
-	background-color: rgba(183, 134, 32, 20%);
-	border: 1px solid #b78620;
-
-}
-
-QPushButton::pressed
-{
-	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(74, 74, 74, 255),stop:1 rgba(49, 49, 49, 255));
-	border: 1px solid #b78620;
-
-}
-
-
-
-
-QCheckBox
-{
-	background-color: transparent;
-    color: lightgray;
-	border: none;
-
-}
-
-
-QCheckBox::indicator
-{
-    background-color: #323232;
-    border: 1px solid darkgray;
-    width: 12px;
-    height: 12px;
-
-}
-
-
-QCheckBox::indicator:checked
-{
-    image:url("./check_mark.png");
-	background-color: #b78620;
-    border: 1px solid #3a546e;
-
-}
-QCheckBox::indicator:unchecked:hover
-{
-	border: 1px solid #b78620; 
-
-}
-
-
-QRadioButton 
-{
-	color: #fff;
-	background-color: transparent;
-
-}
-
-
-QRadioButton::indicator::unchecked:hover 
-{
-	background-color: #d3d3d3;
-	border: 2px solid #002b2b;
-	border-radius: 6px;
-}
-
-
-QRadioButton::indicator::checked 
-{
-	border: 2px solid #52beff;
-	border-radius: 6px;
-	background-color: #002b2b;  
-	width: 9px; 
-	height: 9px; 
-
-}
-QComboBox
-{
-    background-color: #4a5157;
-    padding-left: 6px;
-    color: #fff;
-    height: 20px;
-	border-radius: 4px;
-
-}
-
-
-QComboBox::disabled
-{
-	background-color: #404040;
-	color: #656565;
-	border-color: #051a39;
-
-}
-
-
-QComboBox:on
-{
-    background-color: #4a5157;
-	color: #fff;
-
-}
-
-
-QComboBox QAbstractItemView
-{
-    background-color: #4a5157;
-    color: #fff;
-    selection-background-color: #002b2b;
-	selection-color: #fff;
-    outline: 0;
-
-}
-
-
-QComboBox::drop-down
-{
-	background-color: #4a5157;
-    subcontrol-origin: padding;
-    subcontrol-position: top right;
-	border-radius: 4px;
-    width: 15px;
-
-}
-
-
-QComboBox::down-arrow
-{
-    image: url(./arrow_down.png);
-    width: 8px;
-    height: 8px;
-
-}
-
-
-
-QLineEdit{
-	background-color: #4d4d4d;
-	color: #fff;
-	font-weight: bold;
-	border-style: solid;
-	border-radius: 5px;
-	padding: 5px;
-
-}
-
-
-
-    '''
-    app.setStyleSheet(qss)
+    QApplication.setStyle('Fusion')
+    app.setWindowIcon(QIcon('res/crap.png'))
+    with open('res/preset.qss', 'r', encoding='utf-8') as fp:
+        qss = fp.read()
+        app.setStyleSheet(qss)
     main = XuankeSystem()
     main.show()
 
