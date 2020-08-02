@@ -1,43 +1,44 @@
-import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-#from default import *
+
 
 class TitleBar(QWidget):
     def __init__(self, parent):
         super(TitleBar, self).__init__()
         self.win = parent
-        self.InitializeWindow()
+        self.init_window()
 
-    def InitializeWindow(self):
+    def init_window(self):
         self.isPressed = False
         self.setFixedHeight(25)
-        self.InitializeViews()
+        self.init_views()
         pass
 
-    def InitializeViews(self):
-        self.iconLabel = QLabel(self)
-        self.titleLabel = QLabel(self)
-        self.titleLabel.setObjectName('Up_Label')
+    def init_views(self):
+        self.icon_label = QLabel(self)
+        self.title_label = QLabel(self)
 
-        self.minButton = QPushButton(self)
-        self.closeButton = QPushButton(self)
+        self.min_button = QPushButton(self)
+        self.close_button = QPushButton(self)
+        self.min_button.setObjectName('control_button')
+        self.close_button.setObjectName('control_button')
 
-        self.minButton.setFixedSize(25, 25);
-        self.closeButton.setFixedSize(25, 25);
+        self.min_button.setFixedSize(25, 25);
+        self.close_button.setFixedSize(25, 25);
 
-        self.iconLabel.setFixedSize(25, 25);
-        self.titleLabel.setFixedHeight(25);
+        self.icon_label.setFixedSize(30, 30);
+        self.title_label.setFixedHeight(25);
 
-        self.iconLabel.setAlignment(Qt.AlignCenter);
-        self.titleLabel.setAlignment(Qt.AlignCenter);
+        self.icon_label.setAlignment(Qt.AlignCenter);
+        self.title_label.setAlignment(Qt.AlignCenter);
 
-        self.minButton.setIcon(QIcon('res/min.png'));
-        self.closeButton.setIcon(QIcon('res/exit.png'));
+        self.icon_label.setPixmap(QPixmap('res/crapp.png').scaled(self.icon_label.size() - QSize(10, 10)))
+        self.min_button.setIcon(QIcon('res/mini.png'));
+        self.close_button.setIcon(QIcon('res/close.png'));
 
-        self.minButton.clicked.connect(self.ShowMininizedWindow)
-        self.closeButton.clicked.connect(self.CloseWindow)
+        self.min_button.clicked.connect(self.minimize_window)
+        self.close_button.clicked.connect(self.close_window)
 
         self.lay = QHBoxLayout(self)
         self.setLayout(self.lay)
@@ -45,22 +46,19 @@ class TitleBar(QWidget):
         self.lay.setSpacing(0)
         self.lay.setContentsMargins(0, 0, 0, 0)
 
-        self.lay.addWidget(self.iconLabel)
-        self.lay.addWidget(self.titleLabel)
-        self.lay.addWidget(self.minButton)
-        self.lay.addWidget(self.closeButton)
+        self.lay.addWidget(self.icon_label)
+        self.lay.addWidget(self.title_label)
+        self.lay.addWidget(self.min_button)
+        self.lay.addWidget(self.close_button)
 
-    def ShowMininizedWindow(self):
+    def minimize_window(self):
         self.win.showMinimized()
 
-    def CloseWindow(self):
+    def close_window(self):
         self.win.close()
 
-    def SetTitle(self, str):
-        self.titleLabel.setText(str)
-
-    def SetIcon(self, pix):
-        self.iconLabel.setPixmap(pix.scaled(self.iconLabel.size() - QSize(10, 10)))
+    def set_title(self, str):
+        self.title_label.setText(str)
 
     def mousePressEvent(self, event):
         self.isPressed = True
@@ -82,9 +80,9 @@ class TitleBar(QWidget):
 
         return QWidget().mouseMoveEvent(event)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    win = TitleBar(None)
-    win.show()
-    sys.exit(app.exec_())
-    pass
+# if __name__ == '__main__':
+#     app = QApplication(sys.argv)
+#     win = TitleBar(None)
+#     win.show()
+#     sys.exit(app.exec_())
+#     pass
