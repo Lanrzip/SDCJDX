@@ -13,7 +13,7 @@ class MyThread(QThread):
     account, token, from_, to = '', '', '', ''
     category = ''
     def __init__(self):
-        super(MyThread, self).__init__()
+        super().__init__()
 
     def run(self):
 

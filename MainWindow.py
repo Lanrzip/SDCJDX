@@ -1,4 +1,5 @@
 from MainSpider import *
+from PoemSpider import *
 from TitleBar import *
 import sys, time
 
@@ -110,47 +111,73 @@ class XuankeSystem(QMainWindow):
         self.start_button.clicked.connect(lambda: thread.start())
         self.stop_button.clicked.connect(lambda: thread.terminate())
 
-        down_layout = QGridLayout()
+        down_left_layout = QGridLayout()
 
-        down_layout.addWidget(username_label, 1, 0, 1, 2)
-        down_layout.addWidget(password_label, 2, 0, 1, 2)
-        down_layout.addWidget(self.username_line_edit, 1, 2, 1, 2)
-        down_layout.addWidget(self.password_line_edit, 2, 2, 1, 2)
-        down_layout.addWidget(self.check_message_box, 3, 0, 1, 2)
-        down_layout.addWidget(account_label, 4, 0, 1, 2)
-        down_layout.addWidget(token_label, 5, 0, 1, 2)
-        down_layout.addWidget(from_label, 6, 0, 1, 2)
-        down_layout.addWidget(to_label, 7, 0, 1, 2)
-        down_layout.addWidget(self.account_line_edit, 4, 2, 1, 2)
-        down_layout.addWidget(self.token_line_edit, 5, 2, 1, 2)
-        down_layout.addWidget(self.from_line_edit, 6, 2, 1, 2)
-        down_layout.addWidget(self.to_line_edit, 7, 2, 1, 2)
-        down_layout.addWidget(space_label, 8, 1, 1, 2)
-        down_layout.addWidget(label, 9, 0)
-        down_layout.addWidget(self.category_button1, 10, 0)
-        down_layout.addWidget(self.category_button2, 10, 1)
-        down_layout.addWidget(label2, 11, 0)
-        down_layout.addWidget(self.combo_box1, 12, 0)
-        down_layout.addWidget(self.combo_box2, 12, 1)
-        down_layout.addWidget(self.start_button, 18, 2)
-        down_layout.addWidget(self.stop_button, 18, 3)
+        down_left_layout.addWidget(username_label, 1, 0, 1, 2)
+        down_left_layout.addWidget(password_label, 2, 0, 1, 2)
+        down_left_layout.addWidget(self.username_line_edit, 1, 2, 1, 2)
+        down_left_layout.addWidget(self.password_line_edit, 2, 2, 1, 2)
+        down_left_layout.addWidget(self.check_message_box, 3, 0, 1, 2)
+        down_left_layout.addWidget(account_label, 4, 0, 1, 2)
+        down_left_layout.addWidget(token_label, 5, 0, 1, 2)
+        down_left_layout.addWidget(from_label, 6, 0, 1, 2)
+        down_left_layout.addWidget(to_label, 7, 0, 1, 2)
+        down_left_layout.addWidget(self.account_line_edit, 4, 2, 1, 2)
+        down_left_layout.addWidget(self.token_line_edit, 5, 2, 1, 2)
+        down_left_layout.addWidget(self.from_line_edit, 6, 2, 1, 2)
+        down_left_layout.addWidget(self.to_line_edit, 7, 2, 1, 2)
+        down_left_layout.addWidget(space_label, 8, 1, 1, 2)
+        down_left_layout.addWidget(label, 9, 0)
+        down_left_layout.addWidget(self.category_button1, 10, 0)
+        down_left_layout.addWidget(self.category_button2, 10, 1)
+        down_left_layout.addWidget(label2, 11, 0)
+        down_left_layout.addWidget(self.combo_box1, 12, 0)
+        down_left_layout.addWidget(self.combo_box2, 12, 1)
+        down_left_layout.addWidget(self.start_button, 18, 2)
+        down_left_layout.addWidget(self.stop_button, 18, 3)
 
         self.titleBar = TitleBar(self)
         self.titleBar.setObjectName('UpWidget')
         up_layout = QVBoxLayout()
         up_layout.addWidget(self.titleBar)
-
         up_layout.setContentsMargins(0, 0, 0, 0)
 
         up_widget = QWidget()
         up_widget.setObjectName('UpWidget')
+        up_widget.setLayout(up_layout)
+
         down_widget = QWidget()
         down_widget.setObjectName('DownWidget')
 
-        up_widget.setLayout(up_layout)
+        down_left_widget = QWidget()
+        down_left_widget.setLayout(down_left_layout)
+
+
+####################################################################
+        down_right_widget = QWidget()
+        down_right_layout = QGridLayout()
+        self.poem_button = QPushButton('好诗好诗')
+        self.poem_text_edit = QPlainTextEdit()
+
+        poem_thread = PoemThread()
+        poem_thread.poem_signal.connect(self.show_poem)
+        self.poem_button.clicked.connect(lambda: poem_thread.start())
+
+        down_right_layout.addWidget(self.poem_text_edit, 0, 0, 1 ,2 )
+        down_right_layout.addWidget(self.poem_button, 1, 1, 1, 1)
+
+        down_right_widget.setLayout(down_right_layout)
+
+
+
+####################################################################
+        down_layout = QHBoxLayout()
+        down_layout.addWidget(down_left_widget)
+        down_layout.addWidget(down_right_widget)
+
         down_widget.setLayout(down_layout)
-        
-        global_layout = QVBoxLayout()    
+
+        global_layout = QVBoxLayout()
         global_layout.addWidget(up_widget)
         global_layout.addWidget(down_widget)
         global_layout.setStretch(1, 10)
@@ -162,6 +189,10 @@ class XuankeSystem(QMainWindow):
         main_frame.setLayout(global_layout)
 
         self.titleBar.set_title('学生选课系统')
+
+    def show_poem(self, poem):
+        self.poem_text_edit.setPlainText(poem)
+        self.poem_button.setText('换一首')
 
     def category_state(self):
         radio_button = self.sender()

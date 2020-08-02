@@ -33,7 +33,7 @@ class TitleBar(QWidget):
         self.icon_label.setAlignment(Qt.AlignCenter);
         self.title_label.setAlignment(Qt.AlignCenter);
 
-        self.icon_label.setPixmap(QPixmap('res/crapp.png').scaled(self.icon_label.size() - QSize(10, 10)))
+        self.icon_label.setPixmap(QPixmap('res/crap.png').scaled(self.icon_label.size() - QSize(10, 10)))
         self.min_button.setIcon(QIcon('res/mini.png'));
         self.close_button.setIcon(QIcon('res/close.png'));
 
