@@ -13,6 +13,7 @@ class XuankeSystem(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle('学生选课系统')
+        self.setFixedSize(640,480)
         # 状态栏显示时间
         self.status = self.statusBar()
         self.status.setObjectName('DownWidget')
@@ -106,6 +107,7 @@ class XuankeSystem(QMainWindow):
         self.stop_button = QPushButton('终止')
         self.stop_button.setObjectName('Button')
 
+        """选课主线程"""
         thread = MyThread()
         self.start_button.clicked.connect(lambda: self.validate(thread))
         self.start_button.clicked.connect(lambda: thread.start())
@@ -137,6 +139,7 @@ class XuankeSystem(QMainWindow):
         down_left_layout.addWidget(self.stop_button, 18, 3)
 
         self.titleBar = TitleBar(self)
+        self.titleBar.set_title('学生选课系统')
         self.titleBar.setObjectName('UpWidget')
         up_layout = QVBoxLayout()
         up_layout.addWidget(self.titleBar)
@@ -152,8 +155,6 @@ class XuankeSystem(QMainWindow):
         down_left_widget = QWidget()
         down_left_widget.setLayout(down_left_layout)
 
-
-####################################################################
         down_right_widget = QWidget()
         down_right_layout = QGridLayout()
         self.poem_button = QPushButton('好诗好诗')
@@ -168,9 +169,6 @@ class XuankeSystem(QMainWindow):
 
         down_right_widget.setLayout(down_right_layout)
 
-
-
-####################################################################
         down_layout = QHBoxLayout()
         down_layout.addWidget(down_left_widget)
         down_layout.addWidget(down_right_widget)
@@ -188,12 +186,12 @@ class XuankeSystem(QMainWindow):
         self.setCentralWidget(main_frame)
         main_frame.setLayout(global_layout)
 
-        self.titleBar.set_title('学生选课系统')
-
+    """显示诗句"""
     def show_poem(self, poem):
         self.poem_text_edit.setPlainText(poem)
         self.poem_button.setText('换一首')
 
+    """QRadioButton选项"""
     def category_state(self):
         radio_button = self.sender()
         if radio_button.text() == '专业选修':
@@ -205,11 +203,13 @@ class XuankeSystem(QMainWindow):
         else:
             pass
 
+    """状态栏显示时间"""
     def show_time(self):
         time_ = QDateTime.currentDateTime()
         time_display = time_.toString("yyyy-MM-dd hh:mm:ss dddd")
         self.status.showMessage(time_display)
 
+    """是否使用短信功能"""
     def use_or_not(self):
         check_box = self.sender()
 
@@ -225,14 +225,16 @@ class XuankeSystem(QMainWindow):
             self.to_line_edit.setEnabled(False)
             self.from_line_edit.setEnabled(False)
 
+    """开启短信功能提示对话框"""
     def show_dialog(self):
         message = "开启短信提醒功能请前往 <a href='https://www.twilio.com/'>twilio.com</a> 注册账号。 \
-                  使用教程可参考 <a href=''>教程</a>, 会用当我没说。。。"
+                  使用教程可参考 <a href='https://blog.csdn.net/ddjhpxs/article/details/107692185'>注册教程</a>, 会用当我没说。。。"
         reply = QMessageBox.information(self, '提示', message, QMessageBox.Yes | QMessageBox.No)
         self.setObjectName('DownWidget')
         if reply == QMessageBox.No:
             self.check_message_box.setCheckState(0)
-            
+
+    """校验"""
     def validate(self, thread):
         thread.username = self.username_line_edit.text()
         thread.password = self.password_line_edit.text()

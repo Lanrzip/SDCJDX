@@ -8,8 +8,9 @@ from PyQt5.QtCore import *
 class PoemThread(QThread):
     poem_signal = pyqtSignal(str)
     headers = {
-        'UserAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'}
-    width = 15
+        'UserAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                     'Chrome/84.0.4147.105 Safari/537.36'}
+    width = 13
 
     def __init__(self):
         super().__init__()
@@ -32,7 +33,7 @@ class PoemThread(QThread):
         article = html.xpath("//div[@class='sons'][1]//div[@class='contson']//text()")
         article = re.sub(r'[\x20]', '', ''.join(article).strip())
 
-
+        # 居中显示标题
         space = ' ' * (self.width - len(title))
         poem = space + title + '\n              ' + author + '\n\n' + article
 
