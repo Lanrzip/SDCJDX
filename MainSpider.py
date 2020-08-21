@@ -12,13 +12,17 @@ class MyThread(QThread):
     username, password = '', ''
     account, token, from_, to = '', '', '', ''
     category = ''
-    
+    bid = ''
+
     def __init__(self):
         super().__init__()
 
     def run(self):
         print('开始')
         print(self.category)
+        
+        url = f"http://jw.sdufe.edu.cn/jsxsd/xsxk/xsxk_index?jx0502zbid={self.bid}"
+
         driver_path = r'D:\eng\chromedriver.exe'
         driver = webdriver.Chrome(executable_path=driver_path)
         driver.get('http://jw.sdufe.edu.cn/')
@@ -31,14 +35,16 @@ class MyThread(QThread):
             EC.presence_of_element_located((By.CLASS_NAME, 'maintext'))
         )
 
-        iframe = driver.find_element_by_id('Frame0')
-        driver.switch_to.frame(iframe)
-
-        driver.find_element_by_xpath("//div[@class='panel-body']//div[@class='grid'][3]").click()
+        driver.get(url)
+        # iframe = driver.find_element_by_id('Frame0')
+        # driver.switch_to.frame(iframe)
+        # 
+        # driver.find_element_by_xpath("//div[@class='panel-body']//div[@class='grid'][3]").click()
 
         """是否发送短信"""
         if self.account != '':
             self.send_message()
+        print('完成')
 
     def send_message(self):
         # ACCOUNT = "AC7f63698bf6c852f6311153fad0c9f941"

@@ -30,8 +30,12 @@ class XuankeSystem(QMainWindow):
         password_label.setFont(QFont("Microsoft YaHei"))
         password_label.setObjectName('Label')
 
+        zbid_label = QLabel('BID')
+        zbid_label.setFont(QFont("Microsoft YaHei"))
+        zbid_label.setObjectName('Label')
+
         self.username_line_edit = QLineEdit()
-        self.username_line_edit.setPlaceholderText('请输入账号')
+        self.username_line_edit.setPlaceholderText('请输入学号')
         self.username_line_edit.setObjectName('Edit')
         # 限定11位整数
         int_validator = QRegExpValidator()
@@ -44,6 +48,11 @@ class XuankeSystem(QMainWindow):
         self.password_line_edit.setObjectName('Edit')
         # 输入密码时不显示
         self.password_line_edit.setEchoMode(QLineEdit.Password)
+
+        self.zbid_line_edit = QLineEdit()
+        self.zbid_line_edit.setPlaceholderText('此项必填')
+        self.zbid_line_edit.setObjectName('Edit')
+
 
         """选择"""
         self.check_message_box = QCheckBox('发送短信通知')
@@ -115,10 +124,12 @@ class XuankeSystem(QMainWindow):
 
         down_left_layout = QGridLayout()
 
-        down_left_layout.addWidget(username_label, 1, 0, 1, 2)
-        down_left_layout.addWidget(password_label, 2, 0, 1, 2)
-        down_left_layout.addWidget(self.username_line_edit, 1, 2, 1, 2)
-        down_left_layout.addWidget(self.password_line_edit, 2, 2, 1, 2)
+        down_left_layout.addWidget(username_label, 0, 0, 1, 2)
+        down_left_layout.addWidget(password_label, 1, 0, 1, 2)
+        down_left_layout.addWidget(self.username_line_edit, 0, 2, 1, 2)
+        down_left_layout.addWidget(self.password_line_edit, 1, 2, 1, 2)
+        down_left_layout.addWidget(zbid_label, 2, 0, 1, 2)
+        down_left_layout.addWidget(self.zbid_line_edit, 2, 2, 1, 2)
         down_left_layout.addWidget(self.check_message_box, 3, 0, 1, 2)
         down_left_layout.addWidget(account_label, 4, 0, 1, 2)
         down_left_layout.addWidget(token_label, 5, 0, 1, 2)
@@ -238,6 +249,7 @@ class XuankeSystem(QMainWindow):
     def validate(self, thread):
         thread.username = self.username_line_edit.text()
         thread.password = self.password_line_edit.text()
+        thread.bid = self.zbid_line_edit.text()
 
         thread.account = self.account_line_edit.text()
         thread.token = self.token_line_edit.text()
