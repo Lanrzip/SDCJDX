@@ -1,7 +1,7 @@
+import sys, time, re
 from MainSpider import *
 from PoemSpider import *
 from TitleBar import *
-import sys, time
 
 
 class XuankeSystem(QMainWindow):
@@ -13,7 +13,7 @@ class XuankeSystem(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle('学生选课系统')
-        self.setFixedSize(640,480)
+        self.setFixedSize(840,480)
         # 状态栏显示时间
         self.status = self.statusBar()
         self.status.setObjectName('DownWidget')
@@ -153,6 +153,7 @@ class XuankeSystem(QMainWindow):
         down_right_widget = QWidget()
         down_right_layout = QGridLayout()
         self.poem_button = QPushButton('好诗好诗')
+        self.poem_button.setObjectName('poem')
         self.poem_text_edit = QPlainTextEdit()
 
         poem_thread = PoemThread()
@@ -164,8 +165,18 @@ class XuankeSystem(QMainWindow):
 
         down_right_widget.setLayout(down_right_layout)
 
+        self.down_center_edit = QPlainTextEdit()
+        self.down_center_edit.setPlaceholderText("填入同一类别的课程编号，以空格分隔。例： \n"
+                                                 "411WK047 411WK049 411WK046")
+
+        down_center_widget = QWidget()
+        down_center_layout = QVBoxLayout()
+        down_center_layout.addWidget(self.down_center_edit)
+        down_center_widget.setLayout(down_center_layout)
+
         down_layout = QHBoxLayout()
         down_layout.addWidget(down_left_widget)
+        down_layout.addWidget(down_center_widget)
         down_layout.addWidget(down_right_widget)
 
         down_widget.setLayout(down_layout)
@@ -229,6 +240,11 @@ class XuankeSystem(QMainWindow):
         thread.to = self.to_line_edit.text()
 
         thread.category = self.combo_box1.currentText()
+
+        text = self.down_center_edit.toPlainText().replace("\n", " ")
+        text = re.sub(r"\s+", ',', text)
+        print(text)
+        thread.class_list = text.split(",")
 
 
 if __name__ == '__main__':

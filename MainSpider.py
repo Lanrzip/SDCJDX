@@ -15,6 +15,7 @@ class MyThread(QThread):
     account, token, from_, to = '', '', '', ''
     category = ''
     bid = ''
+    class_list = []
 
     def __init__(self):
         super().__init__()
@@ -48,7 +49,7 @@ class MyThread(QThread):
         teacher.send_keys('智慧树')
         driver.find_element_by_xpath(".//input[@type='button']").click()
         time.sleep(0.5)
-        class_list = ['411WK047','411WK049','411WK046']
+        class_list = self.class_list
         for cla in class_list:
             select = driver.find_element_by_xpath(f"//td[contains(text(), '{cla}')]/../td[last()]/div").click()
             alert = driver.switch_to.alert
@@ -60,9 +61,11 @@ class MyThread(QThread):
                 alert.accept()
                 if self.account != '':
                     self.send_message()
+                break
             else:
                 try:
                     alert.accept()
+                    break
                 except:
                     break
 

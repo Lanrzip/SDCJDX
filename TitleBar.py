@@ -24,8 +24,8 @@ class TitleBar(QWidget):
         self.min_button.setObjectName('control_button')
         self.close_button.setObjectName('control_button')
 
-        self.min_button.setFixedSize(25, 25);
-        self.close_button.setFixedSize(25, 25);
+        self.min_button.setFixedSize(22, 22);
+        self.close_button.setFixedSize(22, 22);
 
         self.icon_label.setFixedSize(30, 30);
         self.title_label.setFixedHeight(25);
