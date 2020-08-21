@@ -34,7 +34,7 @@ class XuankeSystem(QMainWindow):
         zbid_label.setFont(QFont("Microsoft YaHei"))
         zbid_label.setObjectName('Label')
 
-        self.username_line_edit = QLineEdit()
+        self.username_line_edit = QLineEdit('20181754121')
         self.username_line_edit.setPlaceholderText('请输入学号')
         self.username_line_edit.setObjectName('Edit')
         # 限定11位整数
@@ -43,13 +43,13 @@ class XuankeSystem(QMainWindow):
         int_validator.setRegExp(reg)
         self.username_line_edit.setValidator(int_validator)
 
-        self.password_line_edit = QLineEdit()
+        self.password_line_edit = QLineEdit('skd158CF')
         self.password_line_edit.setPlaceholderText('请输入密码')
         self.password_line_edit.setObjectName('Edit')
         # 输入密码时不显示
         self.password_line_edit.setEchoMode(QLineEdit.Password)
 
-        self.zbid_line_edit = QLineEdit()
+        self.zbid_line_edit = QLineEdit('70A1CABD2E054E06A233181DEE7CB6E9')
         self.zbid_line_edit.setPlaceholderText('此项必填')
         self.zbid_line_edit.setObjectName('Edit')
 
@@ -87,24 +87,12 @@ class XuankeSystem(QMainWindow):
         self.to_line_edit.setEnabled(False)
 
         space_label = QLabel('')
-        label = QLabel('选择选修课类型')
+        label = QLabel('选择通识选修课类别')
         label.setObjectName('Label')
 
-        self.category_button1 = QRadioButton('通识选修')
-        self.category_button1.setChecked(True)
-        self.category_button1.toggled.connect(self.category_state)
-        self.category_button2 = QRadioButton('专业选修')
-        self.category_button2.toggled.connect(self.category_state)
-
-        label2 = QLabel('类别：')
-        label2.setObjectName('Label')
         self.combo_box1 = QComboBox()
-        self.combo_box1.addItems(['所有课程','财经特色','传统文化','创新创业',
-                                  '人文社科','自然科学','体育保健'])
-        self.combo_box2 = QComboBox()
-        self.combo_box2.addItems(['所有课程','...'])
-
-        self.combo_box2.setEnabled(False)
+        self.combo_box1.addItems(['所有课程','传统文化类','创新创业类',
+                                  '人文社科类','自然科学类','体育保健类'])
 
         username = self.username_line_edit.text()
         password = self.password_line_edit.text()
@@ -141,11 +129,7 @@ class XuankeSystem(QMainWindow):
         down_left_layout.addWidget(self.to_line_edit, 7, 2, 1, 2)
         down_left_layout.addWidget(space_label, 8, 1, 1, 2)
         down_left_layout.addWidget(label, 9, 0)
-        down_left_layout.addWidget(self.category_button1, 10, 0)
-        down_left_layout.addWidget(self.category_button2, 10, 1)
-        down_left_layout.addWidget(label2, 11, 0)
         down_left_layout.addWidget(self.combo_box1, 12, 0)
-        down_left_layout.addWidget(self.combo_box2, 12, 1)
         down_left_layout.addWidget(self.start_button, 18, 2)
         down_left_layout.addWidget(self.stop_button, 18, 3)
 
@@ -202,18 +186,6 @@ class XuankeSystem(QMainWindow):
         self.poem_text_edit.setPlainText(poem)
         self.poem_button.setText('换一首')
 
-    """QRadioButton选项"""
-    def category_state(self):
-        radio_button = self.sender()
-        if radio_button.text() == '专业选修':
-            self.combo_box1.setEnabled(False)
-            self.combo_box2.setEnabled(True)
-        elif radio_button.text() == '通识选修':
-            self.combo_box1.setEnabled(True)
-            self.combo_box2.setEnabled(False)
-        else:
-            pass
-
     """状态栏显示时间"""
     def show_time(self):
         time_ = QDateTime.currentDateTime()
@@ -256,10 +228,7 @@ class XuankeSystem(QMainWindow):
         thread.from_ = self.from_line_edit.text()
         thread.to = self.to_line_edit.text()
 
-        if self.category_button1.isChecked():
-            thread.category = self.combo_box1.currentText()
-        else:
-            thread.category = self.combo_box2.currentText()
+        thread.category = self.combo_box1.currentText()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,7 @@
+import time
 from twilio.rest import Client
 from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -36,15 +38,33 @@ class MyThread(QThread):
         )
 
         driver.get(url)
-        # iframe = driver.find_element_by_id('Frame0')
-        # driver.switch_to.frame(iframe)
-        # 
-        # driver.find_element_by_xpath("//div[@class='panel-body']//div[@class='grid'][3]").click()
 
-        """是否发送短信"""
-        if self.account != '':
-            self.send_message()
-        print('完成')
+        driver.find_element_by_xpath("//*[contains(text(), '公选课选课')]").click()
+        driver.execute_script("window.open('http://jw.sdufe.edu.cn/jsxsd/xsxkkc/comeInGgxxkxk')")
+        driver.switch_to.window(driver.window_handles[1])
+        selectTag = Select(driver.find_element_by_name('szjylb'))
+        selectTag.select_by_visible_text(self.category)
+        teacher = driver.find_element_by_id('skls')
+        teacher.send_keys('智慧树')
+        driver.find_element_by_xpath(".//input[@type='button']").click()
+        time.sleep(0.5)
+        class_list = ['411WK047','411WK049','411WK046']
+        for cla in class_list:
+            select = driver.find_element_by_xpath(f"//td[contains(text(), '{cla}')]/../td[last()]/div").click()
+            alert = driver.switch_to.alert
+            alert.accept()
+            if alert.text == "选课失败：此课堂选课人数已满！":
+                alert.accept()
+                continue
+            elif alert.text == "选课成功":
+                alert.accept()
+                if self.account != '':
+                    self.send_message()
+            else:
+                try:
+                    alert.accept()
+                except:
+                    break
 
     def send_message(self):
         # ACCOUNT = "AC7f63698bf6c852f6311153fad0c9f941"
