@@ -26,7 +26,7 @@ class MyThread(QThread):
         
         url = f"http://jw.sdufe.edu.cn/jsxsd/xsxk/xsxk_index?jx0502zbid={self.bid}"
 
-        driver_path = r'D:\eng\chromedriver.exe'
+        driver_path = r'res\chromedriver.exe'
         driver = webdriver.Chrome(executable_path=driver_path)
         driver.get('http://jw.sdufe.edu.cn/')
         input_id = driver.find_element_by_id('userAccount')
@@ -43,35 +43,41 @@ class MyThread(QThread):
         driver.find_element_by_xpath("//*[contains(text(), '公选课选课')]").click()
         driver.execute_script("window.open('http://jw.sdufe.edu.cn/jsxsd/xsxkkc/comeInGgxxkxk')")
         driver.switch_to.window(driver.window_handles[1])
-        selectTag = Select(driver.find_element_by_name('szjylb'))
-        selectTag.select_by_visible_text(self.category)
-        teacher = driver.find_element_by_id('skls')
-        teacher.send_keys('智慧树')
+        if self.category != '所有课程':
+            selectTag = Select(driver.find_element_by_name('szjylb'))
+            selectTag.select_by_visible_text(self.category)
+        # teacher = driver.find_element_by_id('skls')
+        # teacher.send_keys('智慧树')
         driver.find_element_by_xpath(".//input[@type='button']").click()
-        time.sleep(0.5)
+        time.sleep(20)
         class_list = self.class_list
-        for cla in class_list:
-            select = driver.find_element_by_xpath(f"//td[contains(text(), '{cla}')]/../td[last()]/div").click()
-            alert = driver.switch_to.alert
-            alert.accept()
-            if alert.text == "选课失败：此课堂选课人数已满！":
+        grab = True
+        while grab:
+            for cla in class_list:
+                select = driver.find_element_by_xpath(f"//td[contains(text(), '{cla}')]/../td[last()]/div").click()
+                alert = driver.switch_to.alert
                 alert.accept()
-                continue
-            elif alert.text == "选课成功":
-                alert.accept()
-                if self.account != '':
-                    self.send_message()
-                break
-            else:
-                try:
+                if alert.text == "选课失败：此课堂选课人数已满！":
                     alert.accept()
+                    continue
+                elif alert.text == "选课成功":
+                    alert.accept()
+                    grab = False
+                    if self.account != '':
+                        self.send_message()
                     break
-                except:
-                    break
+                else:
+                    try:
+                        alert.accept()
+                        grab = False
+                        break
+                    except:
+                        grab = False
+                        break
 
     def send_message(self):
         # ACCOUNT = "AC7f63698bf6c852f6311153fad0c9f941"
-        # TOKEN = "74e63b4efb4a4fb4df4303f2fd49cd2d"
+        # TOKEN = "6ff5e674712f6196d313922e0dafbaa9"
         # FROM = '+18569421593'
         # TO = '+8618653195606'
 

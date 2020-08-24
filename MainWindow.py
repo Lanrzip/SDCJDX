@@ -34,7 +34,7 @@ class XuankeSystem(QMainWindow):
         zbid_label.setFont(QFont("Microsoft YaHei"))
         zbid_label.setObjectName('Label')
 
-        self.username_line_edit = QLineEdit('20181754121')
+        self.username_line_edit = QLineEdit()
         self.username_line_edit.setPlaceholderText('请输入学号')
         self.username_line_edit.setObjectName('Edit')
         # 限定11位整数
@@ -43,13 +43,13 @@ class XuankeSystem(QMainWindow):
         int_validator.setRegExp(reg)
         self.username_line_edit.setValidator(int_validator)
 
-        self.password_line_edit = QLineEdit('skd158CF')
+        self.password_line_edit = QLineEdit()
         self.password_line_edit.setPlaceholderText('请输入密码')
         self.password_line_edit.setObjectName('Edit')
         # 输入密码时不显示
         self.password_line_edit.setEchoMode(QLineEdit.Password)
 
-        self.zbid_line_edit = QLineEdit('70A1CABD2E054E06A233181DEE7CB6E9')
+        self.zbid_line_edit = QLineEdit()
         self.zbid_line_edit.setPlaceholderText('此项必填')
         self.zbid_line_edit.setObjectName('Edit')
 
@@ -87,12 +87,12 @@ class XuankeSystem(QMainWindow):
         self.to_line_edit.setEnabled(False)
 
         space_label = QLabel('')
-        label = QLabel('选择通识选修课类别')
+        label = QLabel('通识选修课类别(可选)')
         label.setObjectName('Label')
 
         self.combo_box1 = QComboBox()
-        self.combo_box1.addItems(['所有课程','传统文化类','创新创业类',
-                                  '人文社科类','自然科学类','体育保健类'])
+        self.combo_box1.addItems(['所有课程','人文社科类','财经特色类','自然科学类',
+                                  '创新创业类','体育保健类','传统文化类'])
 
         username = self.username_line_edit.text()
         password = self.password_line_edit.text()
@@ -166,8 +166,9 @@ class XuankeSystem(QMainWindow):
         down_right_widget.setLayout(down_right_layout)
 
         self.down_center_edit = QPlainTextEdit()
-        self.down_center_edit.setPlaceholderText("填入同一类别的课程编号，以空格分隔。例： \n"
-                                                 "411WK047 411WK049 411WK046")
+        self.down_center_edit.setPlaceholderText("填入同一页的课程编号，以空格分隔。例： \n"
+                                                 "411WK047 411WK049 411WK046\n"
+                                                 "注：结尾不要留空字符(空格、换行符等)")
 
         down_center_widget = QWidget()
         down_center_layout = QVBoxLayout()
@@ -222,7 +223,7 @@ class XuankeSystem(QMainWindow):
     """开启短信功能提示对话框"""
     def show_dialog(self):
         message = "开启短信提醒功能请前往 <a href='https://www.twilio.com/'>twilio.com</a> 注册账号。 \
-                  使用教程可参考 <a href='https://blog.csdn.net/ddjhpxs/article/details/107692185'>注册教程</a>, 会用当我没说。。。"
+                  使用教程可参考 <a href='https://blog.csdn.net/ddjhpxs/article/details/107692185'>注册教程</a>--"
         reply = QMessageBox.information(self, '提示', message, QMessageBox.Yes | QMessageBox.No)
         self.setObjectName('DownWidget')
         if reply == QMessageBox.No:
