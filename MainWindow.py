@@ -34,7 +34,7 @@ class XuankeSystem(QMainWindow):
         zbid_label.setFont(QFont("Microsoft YaHei"))
         zbid_label.setObjectName('Label')
 
-        self.username_line_edit = QLineEdit('20181754121')
+        self.username_line_edit = QLineEdit()
         self.username_line_edit.setPlaceholderText('请输入学号')
         self.username_line_edit.setObjectName('Edit')
         # 限定11位整数
@@ -43,13 +43,13 @@ class XuankeSystem(QMainWindow):
         int_validator.setRegExp(reg)
         self.username_line_edit.setValidator(int_validator)
 
-        self.password_line_edit = QLineEdit('skd158CF')
+        self.password_line_edit = QLineEdit()
         self.password_line_edit.setPlaceholderText('请输入密码')
         self.password_line_edit.setObjectName('Edit')
         # 输入密码时不显示
         self.password_line_edit.setEchoMode(QLineEdit.Password)
 
-        self.zbid_line_edit = QLineEdit('70A1CABD2E054E06A233181DEE7CB6E9')
+        self.zbid_line_edit = QLineEdit()
         self.zbid_line_edit.setPlaceholderText('此项必填')
         self.zbid_line_edit.setObjectName('Edit')
 
