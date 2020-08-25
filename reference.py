@@ -17,14 +17,14 @@ chrome_options.add_argument('--proxy-server={host}:{port}'.format(host='localhos
 class HuoChe(object):
     """docstring for Train"""
     driver_name = 'Chrome'
-    executable_path = 'D:\chromedriver.exe'
+    executable_path = 'D:\eng\chromedriver.exe'
     # 用户名 密码
-    username = u"20181754128"
-    passwd = u"zxd123123"
+    username = u"20181754121"
+    passwd = u"skd158CF"
 
     """网址"""
     # 我们学校强智选课URL
-    select_url = "http://jw.sdufe.edu.cn/jsxsd/xsxk/xsxk_index?jx0502zbid=EDCD86DB92DC498FAB5C27AECA4117E5"
+    select_url = "http://jw.sdufe.edu.cn/jsxsd/xsxk/xsxk_index?jx0502zbid=70A1CABD2E054E06A233181DEE7CB6E9"
     # 强智登录URL
     login_url = "http://jw.sdufe.edu.cn/"
     initmy_url = "http://jw.sdufe.edu.cn/jsxsd/framework/xsMain.jsp"

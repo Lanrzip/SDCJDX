@@ -1,4 +1,5 @@
-import sys, time, re
+import uuid, sys, time, re
+import pymysql
 from MainSpider import *
 from PoemSpider import *
 from TitleBar import *
@@ -248,7 +249,66 @@ class XuankeSystem(QMainWindow):
         thread.class_list = text.split(",")
 
 
+class VerifyWindow(QWidget):
+    def __init__(self):
+        super(VerifyWindow, self).__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.resize(500, 350)
+        self.setWindowTitle('验证')
+        layout = QHBoxLayout()
+        label = QLabel('密钥')
+        self.line = QLineEdit()
+
+        button = QPushButton('提交')
+        button.clicked.connect(self.switch_window)
+
+        layout.addWidget(label)
+        layout.addWidget(self.line)
+        layout.addWidget(button)
+        self.setLayout(layout)
+
+    def switch_window(self):
+        pw = self.line.text()
+        node = uuid.getnode()
+        mac = uuid.UUID(int=node).hex[-12:]
+        conn = pymysql.connect(host='154.8.203.1',
+                               user='root',
+                               password='34808',
+                               database='main',
+                               port=3306)
+
+        cursor = conn.cursor()
+
+        sql = """
+            select mac, password from user where password=%s
+        """
+
+        cursor.execute(sql, (pw))
+        result = cursor.fetchone()
+        if isinstance(result, tuple):
+            if result[0] is None:
+                cursor.execute("update user set mac=%s where password=%s",
+                               (mac, pw))
+                conn.commit()
+                self.hide()
+                self.s = XuankeSystem()
+                self.s.show()
+            else:
+                if result[0] == mac:
+                    self.hide()
+                    self.s = XuankeSystem()
+                    self.s.show()
+                else:
+                    QMessageBox.warning(self, '警告', '该账号已被使用', QMessageBox.Ok)
+        else:
+            QMessageBox.critical(self,'错误','密码错误',QMessageBox.Ok)
+        conn.close()
+
+
 if __name__ == '__main__':
+
     app = QApplication(sys.argv)
     QApplication.setStyle('Fusion')
     app.setWindowIcon(QIcon('res/crap.png'))
@@ -257,7 +317,20 @@ if __name__ == '__main__':
         qss = fp.read()
         app.setStyleSheet(qss)
 
-    main = XuankeSystem()
+    main = VerifyWindow()
     main.show()
 
     sys.exit(app.exec_())
+# if __name__ == '__main__':
+#     app = QApplication(sys.argv)
+#     QApplication.setStyle('Fusion')
+#     app.setWindowIcon(QIcon('res/crap.png'))
+#
+#     with open('res/preset.qss', 'r', encoding='utf-8') as fp:
+#         qss = fp.read()
+#         app.setStyleSheet(qss)
+#
+#     main = XuankeSystem()
+#     main.show()
+#
+#     sys.exit(app.exec_())
