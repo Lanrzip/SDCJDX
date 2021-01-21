@@ -23,7 +23,7 @@ class MyThread(QThread):
     def run(self):
         print('开始')
         print(self.category)
-        
+
         url = f"http://jw.sdufe.edu.cn/jsxsd/xsxk/xsxk_index?jx0502zbid={self.bid}"
 
         driver_path = r'res\chromedriver.exe'
@@ -55,9 +55,10 @@ class MyThread(QThread):
         while grab:
             for cla in class_list:
                 select = driver.find_element_by_xpath(f"//td[contains(text(), '{cla}')]/../td[last()]/div").click()
+                print(cla)
                 alert = driver.switch_to.alert
                 alert.accept()
-                if alert.text == "选课失败：此课堂选课人数已满！":
+                if alert.text in ["选课失败：此课堂选课人数已满！", "已超过限选人数", "选课失败：当前课程往年已选择！"]:
                     alert.accept()
                     continue
                 elif alert.text == "选课成功":
